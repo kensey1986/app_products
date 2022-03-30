@@ -18,6 +18,7 @@ export class UI {
                 <div class="card-body">
                     <strong>Producto</strong>: ${product.name} -
                     <strong>Precio</strong>: ${product.price} - 
+                    <strong>Cantidad</strong>: ${product.cantidad} - 
                     <strong>Año</strong>: ${product.year}
                     <a href="#" class="btn btn-danger rounded" name="delete">Borrar</a>
                 </div>
@@ -35,6 +36,9 @@ export class UI {
 
   deleteProduct(element) {
     if (element.name === "delete") {
+      console.log(element.parentElement);
+      console.log(element.parentElement.parentElement);
+      
       element.parentElement.parentElement.remove();
       this.showMessage("Producto Eliminado!", "success");
     }
@@ -56,5 +60,8 @@ export class UI {
     // setTimeout(function () {
     //   document.querySelector(".alert").remove();
     // }, 2000);
+    setTimeout( () => {
+      document.querySelector(".alert").remove();
+    }, 2000);
   }
 }
