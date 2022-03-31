@@ -3,6 +3,10 @@
  */
 export class UI {
 
+  listProducts(listadoDeProductos){
+    console.log('listando productos', listadoDeProductos)
+    
+  }
   /**
    * Add a New Product 
    * @param {Object} product A new product Object
