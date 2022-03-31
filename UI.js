@@ -5,7 +5,7 @@ export class UI {
 
   listProducts(listadoDeProductos){
     console.log('listando productos', listadoDeProductos)
-    
+  
   }
   /**
    * Add a New Product 

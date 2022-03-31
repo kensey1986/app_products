@@ -1,6 +1,11 @@
 import { Product } from "./Product.js";
 import { UI } from "./UI.js";
 
+
+const listProduct =[];
+const ui = new UI();
+const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
+ui.listProducts(arrayProducts);
 // DOM Events
 document
   .getElementById("product-form")
@@ -31,9 +36,12 @@ document
       
         return ui.showMessage("Campos Vacios!", "danger");
     }
-
     // Save Product
     const res=  ui.addProduct(product);
+    listProduct.push(product);
+    // console.log(listProduct);
+    //envio mi array de objetos productos al local storage
+    localStorage.setItem('listProduct', JSON.stringify(listProduct));
     ui.showMessage("Producto Agregado", "success");
     ui.resetForm();
   });
