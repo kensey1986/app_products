@@ -4,7 +4,10 @@
 export class UI {
 
   listProducts(listadoDeProductos){
-    console.log('listando productos', listadoDeProductos)
+    console.log('listando productos', listadoDeProductos);
+    listadoDeProductos?.forEach(product => {
+      this.addProduct(product);
+    });
   
   }
   /**
@@ -24,7 +27,8 @@ export class UI {
                     <strong>Precio</strong>: ${product.price} - 
                     <strong>Cantidad</strong>: ${product.cantidad} - 
                     <strong>Año</strong>: ${product.year}
-                    <a href="#" class="btn btn-danger rounded" name="delete">Borrar</a>
+                    <a href="#" id=${product.id} class="btn btn-danger rounded" name="delete">Borrar</a>
+                    <a href="#" id=${product.id} class="btn btn-info rounded" name="edit">Editar</a>
                 </div>
             </div>
         `;
@@ -38,6 +42,7 @@ export class UI {
     document.getElementById("product-form").reset();
   }
 
+  
   deleteProduct(element) {
     if (element.name === "delete") {
       console.log(element.parentElement);
