@@ -11,3 +11,10 @@
 .error {
     background: rgb(153, 91, 91);
 }
+
+.hidden-btn{
+    display: none;
+}
+.show-btn{
+    display: block;
+}

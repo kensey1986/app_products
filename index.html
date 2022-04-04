@@ -1,90 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title> App Products</title>
-    <!-- Bootswatch Cosmo Theme -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css"
-    />
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="App.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title> App Products</title>
+  <!-- Bootswatch Cosmo Theme -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css" />
 
-  <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">AppProducts</a>
-    </nav>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="App.css" />
+</head>
 
-    <div class="container">
-      <!-- APPLICATION -->
-      <div id="App" class="row pt-5">
-        <!-- FORM -->
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-header bg-dark text-white-50">
-              <h4>Agregar productos</h4>
-            </div>
-            <form id="product-form" class="card-body">
-              <div class="form-group">
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Nombre Producto"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  type="number"
-                  id="price"
-                  step="0.01"
-                  placeholder="Precio Producto"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <label for="cantidad">Ingrese Cantidad</label>
-                <input
-                  type="number"
-                  id="cantidad"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value="1"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  type="number"
-                  id="year"
-                  min="1900"
-                  max="2099"
-                  step="1"
-                  value="2022"
-                  class="form-control"
-                />
-              </div>
-              <input
-                type="submit"
-                value="Guardar"
-                class="btn btn-secondary btn-block rounded"
-              />
-            </form>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">AppProducts</a>
+  </nav>
+
+  <div class="container">
+    <!-- APPLICATION -->
+    <div id="App" class="row pt-5">
+      <!-- FORM -->
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-dark text-white-50">
+            <h4>Agregar productos</h4>
           </div>
+          <form id="product-form" class="card-body">
+            <div class="form-group">
+              <input type="text" id="name" placeholder="Nombre Producto" class="form-control" />
+            </div>
+            <div class="form-group">
+              <input type="number" id="price" step="0.01" placeholder="Precio Producto" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="cantidad">Ingrese Cantidad</label>
+              <input type="number" id="cantidad" min="0" max="100" step="1" value="1" class="form-control" />
+            </div>
+            <div class="form-group">
+              <input type="number" id="year" min="1900" max="2099" step="1" value="2022" class="form-control" />
+            </div>
+            <input id="btnSave" type="submit" value="Guardar" class="btn btn-secondary btn-block rounded" />
+            <button id="bntEdit" type="button" class="hidden-btn">Actualizar</button>
+          </form>
         </div>
-
-        <!-- PRODUCTS LIST -->
-        <div id="product-list" class="col-md-8"></div>
       </div>
-    </div>
 
-    <script src="App.js" type="module"></script>
-  </body>
+      <!-- PRODUCTS LIST -->
+      <div id="product-list" class="col-md-8"></div>
+    </div>
+  </div>
+
+  <script src="App.js" type="module"></script>
+</body>
+
 </html>
