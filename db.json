@@ -1,0 +1,56 @@
+{
+  "products": [
+    {
+      "name": "Leche destactosada marca la mejor",
+      "price": 5.55,
+      "cantidad": 6,
+      "year": 2021,
+      "categoryId": 1,
+      "id": 1
+    },
+    {
+      "name": "Carne de cerdo y de la mejor",
+      "price": 5.55,
+      "cantidad": 26,
+      "year": 2021,
+      "categoryId": 1,
+      "id": 2
+    },
+    {
+      "id": 3,
+      "name": "leche entera y pasteurizada",
+      "price": 5.55,
+      "cantidad": 25,
+      "year": 2021,
+      "categoryId": 1
+    },
+    {
+      "name": "Carne de cerdo",
+      "price": 55,
+      "cantidad": 55,
+      "year": 2022,
+      "categoryId": 2,
+      "id": 4
+    },
+    {
+      "name": "Carne de res de la mejor caldiad",
+      "price": 55.55,
+      "cantidad": 6,
+      "year": 2021,
+      "categoryId": 1,
+      "id": 5
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "lacteos",
+      "description": "Productos lacteos"
+    },
+    {
+      "id": "2",
+      "name": "carnes",
+      "description": "Productos carnicos"
+    }
+  ]
+}

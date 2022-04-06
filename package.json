@@ -1,0 +1,23 @@
+{
+  "name": "products",
+  "version": "1.0.0",
+  "description": "Esto es una aplicacion de inventarios",
+  "main": "App.js",
+  "scripts": {
+    "servidor": "json-server --watch db.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kensey1986/app_products.git"
+  },
+  "keywords": [],
+  "author": "Mi nombre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kensey1986/app_products/issues"
+  },
+  "homepage": "https://github.com/kensey1986/app_products#readme",
+  "dependencies": {
+    "json-server": "^0.17.0"
+  }
+}

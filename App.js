@@ -13,10 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let listProduct = [];
 
-function productList() {
-
+async function productList() {
+  // llamado a mi api json-serve
+  const arrayProducts = await fetchData();
+  // nueva instancia de mi interfaz
   const ui = new UI();
-  const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
+  // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
   // console.log(arrayProducts)
   if (arrayProducts) {
     listProduct = arrayProducts;
@@ -32,7 +34,7 @@ document
     saveProduct(event);
   });
 
-function saveProduct(event) {
+async function saveProduct(event) {
   // console.log('====================================');
   // console.log(event);
   // console.log('====================================');
@@ -50,11 +52,11 @@ function saveProduct(event) {
   // Create a new Oject Product
   // const product = new Product(name, price, year, 5);
   const idGenerado = idGenerated();
-  
+
   const product = new Product(name, price, year, cantidad, idGenerado);
-  console.log('===========product=========================');
-  console.log(product);
-  console.log('====================================');
+  // console.log('===========product=========================');
+  // console.log(product);
+  // console.log('====================================');
   // Create a new UI instance
   const ui = new UI();
 
@@ -68,6 +70,7 @@ function saveProduct(event) {
   listProduct.push(product);
   // console.log(listProduct);
   //envio mi array de objetos productos al local storage
+  saveProductDb(product);
   localStorage.setItem('listProduct', JSON.stringify(listProduct));
   ui.showMessage("Producto Agregado", "success");
   ui.resetForm();
@@ -82,14 +85,14 @@ document.getElementById("product-list").addEventListener("click", (e) => {
   if (e.target.name === "edit") {
     const idEdit = e.target.id;
     // console.log("🚀 ~ file: App.js ~ line 84 ~ document.getElementById ~ idEdit", idEdit)
-    
+
     const listItem = listProduct.filter((element) => element.id === idEdit);
     // console.log('=============listItem=======================');
     // console.log(listItem);
     // console.log('====================================');
     const item = listItem[0];
     console.log("🚀 ~ file: App.js ~ line 92 ~ document.getElementById ~ item", item)
-    
+
     ui.editProduct(e.target, item);
 
     // element.parentElement.parentElement.remove();
@@ -111,13 +114,13 @@ document.getElementById("product-list").addEventListener("click", (e) => {
 
 document.getElementById("bntEdit").addEventListener("click", (e) => {
   e.preventDefault();
-  
+
   saveProduct(e);
   const ui = new UI();
 
   ui.deleteProduct(e.target);
   const idEliminar = e.target.id;
-  
+
   listProduct = listProduct.filter((element) => element.id !== idEliminar);
   localStorage.setItem('listProduct', JSON.stringify(listProduct));
   const btnSave = document.getElementById('btnSave');
@@ -148,3 +151,60 @@ function idGenerated() {
   id = idParte1 + idParte2;
   return id;
 }
+
+const fetchData = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/products`)
+    // console.log(res);
+    const data = await res.json()
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+const saveProductDb = async (product) => {
+  console.log(product);
+  return new Promise(async (resolve, reject) => {
+    const body = {
+        "name": "leche entera prueba",
+        "price": 5.55,
+        "cantidad": 35,
+        "year": 2021,
+        "categoryId": 1
+    };
+    try {
+      const fetchOptions = {
+        body: JSON.stringify(body),
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        mode: 'cors'
+      };
+      let fetchResultData = null;
+
+      const fetchResult = await fetch('http://localhost:3000/products', fetchOptions);
+
+      if (!fetchResult.ok) {
+        reject(fetchResult);
+      }
+
+      fetchResultData = await fetchResult.json();
+      
+
+      // if (error.codigoError) {
+      //   reject(error);
+
+      //   return;
+      // }
+
+     
+      resolve('ok');
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
