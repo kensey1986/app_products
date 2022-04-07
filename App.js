@@ -1,9 +1,7 @@
 import {
   Product
 } from "./Product.js";
-import {
-  UI
-} from "./UI.js";
+import {   UI } from "./UI.js";
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,20 +9,27 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-let listProduct = [];
+let  listProduct = [];
 
 async function productList() {
   // llamado a mi api json-serve
   const arrayProducts = await fetchData();
+  console.log( arrayProducts.length)
   // nueva instancia de mi interfaz
   const ui = new UI();
-  // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
-  // console.log(arrayProducts)
-  if (arrayProducts) {
-    listProduct = arrayProducts;
-    ui.listProducts(arrayProducts);
-  }
-  ui.resetForm();
+
+  if (arrayProducts.length > 0 && arrayProducts === undefined ) {
+    console.log('ingreso');
+    // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
+    // console.log(arrayProducts)
+      listProduct = arrayProducts;
+      ui.listProducts(arrayProducts);
+      ui.resetForm();
+  } else{
+      ui.showMessage("Fallo consulta no hay conexion el servidor!", "info");
+      console.log(' fallo consulta no hay conexion el servidor');
+  } 
+  
 }
 // arrayProducts? listProduct.push(arrayProducts): null;
 // DOM Events
@@ -152,14 +157,25 @@ function idGenerated() {
   return id;
 }
 
+//  async function fetchData(){
+
+//  }
 const fetchData = async () => {
+  const error ='No fue posible cargar la lista de productos';
+
   try {
-    const res = await fetch(`http://localhost:3000/products`)
-    // console.log(res);
-    const data = await res.json()
-    return data;
+    const res = await fetch('http://localhost:3000/products');
+    //  console.log('respeusta de consulta listado', res);
+
+     if (res !== undefined && res.status === 200) {
+      const result=  await res?.json();
+      return result;
+     }else{
+        return error;
+     }
   } catch (error) {
     console.error(error);
+    return error;
   }
 }
 
