@@ -17,10 +17,10 @@
       "categoryId": 1
     },
     {
-      "name": "Queso-blanco",
-      "price": 67,
-      "cantidad": 6.55,
-      "year": 2302,
+      "name": "cerveza",
+      "price": "5000",
+      "cantidad": "15",
+      "year": "2022",
       "categoryId": 1,
       "id": 4
     }

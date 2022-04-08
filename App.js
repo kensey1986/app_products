@@ -15,18 +15,20 @@ async function productList() {
   // llamado a mi api json-serve
   const arrayProducts = await fetchData();
   console.log( arrayProducts.length)
+  console.log( arrayProducts)
+  const condicion = ( arrayProducts.length > 0 && arrayProducts !== undefined)
   // nueva instancia de mi interfaz
   const ui = new UI();
 
-  if (arrayProducts.length > 0 && arrayProducts === undefined ) {
-    console.log('ingreso');
+  if (condicion ) {
+    // console.log('ingreso');
     // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
     // console.log(arrayProducts)
       listProduct = arrayProducts;
       ui.listProducts(arrayProducts);
       ui.resetForm();
   } else{
-      ui.showMessage("Fallo consulta no hay conexion el servidor!", "info");
+      ui.showMessage("Fallo la consulta no hay conexion el servidor!", "info");
       console.log(' fallo consulta no hay conexion el servidor');
   } 
   
@@ -75,7 +77,14 @@ async function saveProduct(event) {
   listProduct.push(product);
   // console.log(listProduct);
   //envio mi array de objetos productos al local storage
-  saveProductDb(product);
+  const result = await saveProductDb(product);
+  console.log(result);
+  const condicionalResp = ( result === undefined || result === null );
+  console.log(condicionalResp);
+  if (condicionalResp) {
+    ui.showMessage("Fallo la creacion del producto", "danger");
+    
+  }
   localStorage.setItem('listProduct', JSON.stringify(listProduct));
   ui.showMessage("Producto Agregado", "success");
   ui.resetForm();
@@ -165,10 +174,11 @@ const fetchData = async () => {
 
   try {
     const res = await fetch('http://localhost:3000/products');
-    //  console.log('respeusta de consulta listado', res);
+    // console.log('respeusta de consulta listado', res);
 
      if (res !== undefined && res.status === 200) {
       const result=  await res?.json();
+      // console.log(result);
       return result;
      }else{
         return error;
@@ -181,13 +191,14 @@ const fetchData = async () => {
 
 
 const saveProductDb = async (product) => {
+  const {name, price} =product
   console.log(product);
   return new Promise(async (resolve, reject) => {
     const body = {
-        "name": "leche entera prueba",
-        "price": 5.55,
-        "cantidad": 35,
-        "year": 2021,
+        "name": product.name,
+        "price": product.price,
+        "cantidad": product.cantidad,
+        "year": product.year,
         "categoryId": 1
     };
     try {
@@ -203,24 +214,20 @@ const saveProductDb = async (product) => {
       let fetchResultData = null;
 
       const fetchResult = await fetch('http://localhost:3000/products', fetchOptions);
-
+      console.log(fetchResult.ok);
       if (!fetchResult.ok) {
+        console.log('aqui ocurrio un error');
         reject(fetchResult);
       }
-
       fetchResultData = await fetchResult.json();
-      
-
       // if (error.codigoError) {
       //   reject(error);
-
       //   return;
       // }
-
-     
       resolve('ok');
     } catch (error) {
-      reject(error);
+      console.log('estoy catch voy a retornar ', error)
+      reject('problemas de conexion');
     }
   });
 };
