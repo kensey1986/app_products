@@ -6,23 +6,15 @@
       "cantidad": 26,
       "year": 2021,
       "categoryId": 1,
-      "id": 2
+      "id": 1
     },
     {
-      "id": 3,
-      "name": "leche entera y pasteurizada",
-      "price": 5.55,
-      "cantidad": 25,
-      "year": 2021,
-      "categoryId": 1
-    },
-    {
-      "name": "cerveza",
-      "price": "5000",
-      "cantidad": "15",
+      "name": "papas",
+      "price": "5454",
+      "cantidad": "1",
       "year": "2022",
       "categoryId": 1,
-      "id": 4
+      "id": 2
     }
   ],
   "categories": [

@@ -109,6 +109,6 @@ export class UI {
     // }, 2000);
     setTimeout( () => {
       document.querySelector(".alert").remove();
-    }, 2000);
+    }, 5000);
   }
 }
