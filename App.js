@@ -6,32 +6,34 @@ import {
 } from "./UI.js";
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  productList();
+document.addEventListener('DOMContentLoaded', (e) => {
+  productList(e);
 })
 
 
 let listProduct = [];
 
-async function productList() {
-  // llamado a mi api json-serve
-  const arrayProducts = await fetchData();
-  // console.log( arrayProducts.length)
-  // console.log( arrayProducts)
-  const condicion = (arrayProducts.length > 0 && arrayProducts !== undefined)
-  // nueva instancia de mi interfaz
-  const ui = new UI();
-
-  if (condicion) {
-    // console.log('ingreso');
-    // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
-    // console.log(arrayProducts)
-    listProduct = arrayProducts;
-    ui.listProducts(arrayProducts);
-    ui.resetForm();
-  } else {
-    ui.showMessage("Fallo la consulta no hay conexion el servidor!", "info");
-    console.error(' fallo consulta no hay conexion con el servidor');
+async function productList(e) {
+  e.preventDefault();
+  try {
+    // llamado a mi api json-serve
+    const arrayProducts = await fetchData();
+    const condicion = (!arrayProducts.errorMsn);
+    // nueva instancia de mi interfaz
+    const ui = new UI();
+    if (condicion) {
+      // console.log('ingreso');
+      // const arrayProducts = JSON.parse(localStorage.getItem('listProduct'));
+      // console.log(arrayProducts)
+      listProduct = arrayProducts;
+      ui.listProducts(arrayProducts);
+      ui.resetForm();
+    } else {
+      ui.showMessage(arrayProducts.errorMsn, "info");
+    }
+  } catch (error) {
+    console.log(error);
+    ui.showMessage(arrayProducts.errorMsn, "info");
   }
 
 }
@@ -97,66 +99,77 @@ async function saveProduct(event) {
   // localStorage.setItem('listProduct', JSON.stringify(listProduct));
 }
 
-document.getElementById("product-list").addEventListener("click", (event) => {
+document.getElementById("product-list").addEventListener("click", async (event) => {
 
-  trabajandoData(event);
-  
+  await trabajandoData(event);
+
 
 });
 
-async function  trabajandoData  (e){
+async function trabajandoData(e) {
   const ui = new UI();
-  // console.log('====================================');
-  // console.log(e.target.id);
-  // console.log('====================================');
+  console.log('====================================');
+  console.log(e.target.name);
+  console.log('====================================');
 
   if (e.target.name === "edit") {
     const idEdit = e.target.id;
     // console.log("🚀 ~ file: App.js ~ line 84 ~ document.getElementById ~ idEdit", idEdit)
 
-    const listItem = listProduct.filter((element) => element.id === idEdit);
-    // console.log('=============listItem=======================');
-    // console.log(listItem);
-    // console.log('====================================');
-    const item = listItem[0];
-    console.log("🚀 ~ file: App.js ~ line 92 ~ document.getElementById ~ item", item)
+    try {
+      const resp = await getProductById(idEdit);
+      if (resp.status === 200) {
+        ui.editProduct(e.target, resp.result);
 
-    ui.editProduct(e.target, item);
+      } else {
+        console.log('ocurrio un error')
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
-    // element.parentElement.parentElement.remove();
-    // this.showMessage("Producto Eliminado!", "success");
   }
   if (e.target.name === "delete") {
-      
+
     /**
      * llamamos a nuestra funcion para eliminar un producto
      * y enviamos como argumento el ID del producto (idProduct)
      */
-    
+
     try {
-      
-        const resp = await deleteProduct(2);
-        console.log(resp);
-        ui.showMessage(result.exitoMsn, "success");
-        ui.deleteProduct(e.target);
-        const idEliminar = e.target.id;
-        // listProduct = listProduct.filter((element) => element.id !== idEliminar);
+      const idEliminar = e.target.id;
+      const resp = await deleteProduct(idEliminar);
+      console.log(resp);
+      // ui.showMessage(resp.exitoMsn, "success");
+      ui.deleteProduct(e.target);
+      // listProduct = listProduct.filter((element) => element.id !== idEliminar);
+    } catch (error) {
+      console.log('mensaje error eliminando ', error);
+      ui.showMessage(error.errorMsn, "info");
+    }
 
-     } catch (error) {
-      console.log('mensaje error elimando ', error);
-      ui.showMessage(error.errorMsn, "danger");
-     }
+    e.preventDefault();
 
-    
     // localStorage.setItem('listProduct', JSON.stringify(listProduct));
 
   }
+
+}
+
+document.getElementById("bntEdit").addEventListener("click", async (e) => {
   e.preventDefault();
 
- }
+  try {
+      const resp = await updateProduct(product);
 
-document.getElementById("bntEdit").addEventListener("click", (e) => {
-  e.preventDefault();
+      if (resp.status === 200) {
+          console.log('actualizo producto')
+      }
+  } catch (error) {
+    
+  }
+
+
 
   saveProduct(e);
   const ui = new UI();
@@ -195,26 +208,26 @@ function idGenerated() {
   return id;
 }
 
-//  async function fetchData(){
 
-//  }
 const fetchData = async () => {
-  const error = 'No fue posible cargar la lista de productos';
 
   try {
     const res = await fetch('http://localhost:3000/products');
     // console.log('respeusta de consulta listado', res);
-
-    if (res !== undefined && res.status === 200) {
-      const result = await res ? res.json() : null
-      // console.log(result);
-      return result;
-    } else {
-      return error;
+    if (!res.ok) {
+      console.log('aqui ocurrio un error');
+      return {
+        errorMsn: 'Ha ocurrido un problema al cargar los datos'
+      }
     }
+    const result = await res.json()
+    return result;
   } catch (error) {
     console.error(error);
-    return error;
+    return {
+      status: 500,
+      errorMsn: 'Ha ocurrido un problema al conectar con el servidor'
+    }
   }
 }
 
@@ -282,13 +295,15 @@ const deleteProduct = async (idProduct) => {
         method: 'DELETE',
         mode: 'cors'
       };
-      let fetchResultData = null;
 
-      const fetchResult = await fetch(`http://localhost:3000/${idProduct}`, fetchOptions);
+      const fetchResult = await fetch(`http://localhost:3000/products/${idProduct}`, fetchOptions);
       console.log(fetchResult);
       if (!fetchResult.ok) {
         console.error('Aqui ocurrio un error al eliminar');
-        reject({status: 404, errorMsn: 'No ha sido posible Eliminar este producto'});
+        reject({
+          status: 404,
+          errorMsn: 'No ha sido posible Eliminar este producto'
+        });
         // reject(fetchResult);
       }
       fetchResultData = await fetchResult.json();
@@ -298,10 +313,101 @@ const deleteProduct = async (idProduct) => {
         exitoMsn: 'Producto Eliminado correctamente!'
       });
     } catch (error) {
-      console.log('estoy catch voy a retornar ', error)
+      // console.log('estoy catch voy a retornar ', error)
       reject({
         status: 500,
         errorMsn: 'Error al eliminar el producto, Fallo la conexion con el servidor'
+      });
+    }
+  });
+};
+
+const getProductById = async (idProduct) => {
+
+  return new Promise(async (resolve, reject) => {
+
+    try {
+      const fetchOptions = {
+        cache: 'no-cache',
+        method: 'GET',
+        mode: 'cors'
+      };
+
+      const fetchResult = await fetch(`http://localhost:3000/products/${idProduct}`, fetchOptions);
+      if (!fetchResult.ok) {
+        console.log('aqui ocurrio un error');
+        reject({
+          status: 301,
+          errorMsn: 'fallo la consulta del producto'
+        });
+        // reject(fetchResult);
+      }
+      const fetchResultData = await fetchResult.json();
+      // console.log(fetchResultData);
+      resolve({
+        status: 200,
+        exitoMsn: 'Producto consultado correctamente!',
+        result: fetchResultData
+      });
+    } catch (error) {
+      // console.log('estoy catch voy a retornar ', error)
+      reject({
+        status: 500,
+        errorMsn: 'Error al consultar producto, Fallo la conexion con el servidor'
+      });
+    }
+  });
+};
+
+const updateProduct = async (product) => {
+  /**
+   * destructuracion
+   */
+  const {
+    name,
+    price,
+    cantidad,
+    year,
+    id
+  } = product;
+
+  return new Promise(async (resolve, reject) => {
+    const body = {
+      "name": name,
+      "price": price,
+      "cantidad": cantidad,
+      "year": year,
+      "categoryId": 1
+    };
+    try {
+      const fetchOptions = {
+        body: JSON.stringify(body),
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'PUT',
+        mode: 'cors'
+      };
+
+      const fetchResult = await fetch(`http://localhost:3000/products/${id}`, fetchOptions);
+      console.log(fetchResult.ok);
+      if (!fetchResult.ok) {
+        console.log('aqui ocurrio un error');
+        // reject({status: 301, errorMsn: 'Dato Duplicado'});
+        reject(fetchResult);
+      }
+      const fetchResultData = await fetchResult.json();
+
+      resolve({
+        status: 201,
+        exitoMsn: 'Producto creado correctamente!'
+      });
+    } catch (error) {
+      console.log('estoy catch voy a retornar ', error)
+      reject({
+        status: 500,
+        errorMsn: 'Error al crear producto, Fallo la conexion con el servidor'
       });
     }
   });

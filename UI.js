@@ -4,7 +4,7 @@
 export class UI {
 
   listProducts(listadoDeProductos){
-    console.log('listando productos', listadoDeProductos);
+    // console.log('listando productos', listadoDeProductos);
     listadoDeProductos?.forEach(product => {
       this.addProduct(product);
     });
