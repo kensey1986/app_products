@@ -144,6 +144,60 @@ export class QueryApi {
       }
     });
   };
+
+  updateProduct = async (product, idProduct) => {
+    /**
+     * destructuracion
+     */
+    const {
+      name,
+      price,
+      cantidad,
+      year
+    } = product;
+
+    return new Promise(async (resolve, reject) => {
+      const body = {
+        "name": name,
+        "price": price,
+        "cantidad": cantidad,
+        "year": year,
+        "categoryId": 1
+      };
+      try {
+        const fetchOptions = {
+          body: JSON.stringify(body),
+          cache: 'no-cache',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'PUT',
+          mode: 'cors'
+        };
+        let fetchResultData = null;
+
+        const fetchResult = await fetch(`${this.URL}/${idProduct}`, fetchOptions);
+        if (!fetchResult.ok) {
+          reject({
+            status: 301,
+            errorMsn: 'Dato Duplicado'
+          });
+          // reject(fetchResult);
+        }
+        fetchResultData = await fetchResult.json();
+
+        resolve({
+          status: 201,
+          exitoMsn: 'Producto Actualizado correctamente!'
+        });
+      } catch (error) {
+        reject({
+          status: 500,
+          errorMsn: 'Error al crear producto, Fallo la conexion con el servidor'
+        });
+      }
+    });
+  };
 }
 
 /**
@@ -161,7 +215,7 @@ export class UI {
         this.showMessage("Problema al cargar listado de productos!", "info");
       }
       resp?.forEach(product => {
-        this.addProduct(product);
+        renderizarProduct(product);
       });
     } catch (error) {
       this.showMessage("Fallo la conexion con el servidor!", "info");
@@ -180,7 +234,7 @@ export class UI {
          const resp =  await saveProduct.saveProductDb(product);
          if (resp.status === 201) {
           this.showMessage(resp.exitoMsn, "success");
-            renderizar();
+          renderizarProduct(product);
 
          } else {
           this.showMessage(resp.errorMsn, "info");
@@ -189,25 +243,7 @@ export class UI {
       this.showMessage("Fallo la conexion con el servidor!", "info");
     }
 
-    function renderizar() {
-      const productList = document.getElementById("product-list");
-
-      const element = document.createElement("div");
-
-      element.innerHTML = `
-              <div class="card text-center mb-4">
-                  <div class="card-body">
-                      <strong>Producto</strong>: ${product.name} -
-                      <strong>Precio</strong>: ${product.price} -
-                      <strong>Cantidad</strong>: ${product.cantidad} -
-                      <strong>Año</strong>: ${product.year}
-                      <a href="#" id=${product.id} class="btn btn-danger rounded" name="delete">Borrar</a>
-                      <a href="#" id=${product.id} class="btn btn-info rounded" name="edit">Editar</a>
-                  </div>
-              </div>
-          `;
-      productList.appendChild(element);
-    }
+   
     
   }
 
@@ -239,44 +275,45 @@ export class UI {
   }
 
   async editProduct(element, idProduct) {
+  
     const updateProduct = new QueryApi();
     try {
          const resp =  await updateProduct.getProductById(idProduct);
+         console.log(resp);
          if (resp.status!== 200) {
-           
            this.showMessage(resp.errorMsn, "danger");
          } 
-         cargarData();
+         localStorage.setItem('idProductEdit', resp.result.id)
+         cargarData(element, resp.result);
     } catch (error) {
       this.showMessage(resp.errorMsn, "danger");
       
     }
-    function cargarData (){
-    /**
-     * aqui lleno el formulario con los datos del producto a
-     */
-    document.getElementById('name').value = item.name;
-    document.getElementById('price').value = item.price;
-    document.getElementById('cantidad').value = item.cantidad;
-    document.getElementById('year').value = item.year;
-    /**
-     * trabajo con los botones
-     */
-    const btnSave = document.getElementById('btnSave');
-    btnSave.setAttribute("class", "hidden-btn");
-
-    /**
-     * oculto el item
-     */
-    element.parentElement.parentElement.setAttribute("class", "hidden-btn");
-    const bntEdit = document.getElementById('bntEdit');
-    bntEdit.setAttribute("class", "btn btn-success btn-block rounded show-btn");
-   
-    }
+    
 
   }
 
+  async updateProduct(product) {
 
+    const updateProductDB= new QueryApi();
+    const idProduct = localStorage.getItem('idProductEdit')
+
+    try {
+         const resp =  await updateProductDB.updateProduct(product, idProduct);
+         if (resp.status === 201) {
+          this.showMessage(resp.exitoMsn, "success");
+          renderizarProduct(product);
+
+         } else {
+          this.showMessage(resp.errorMsn, "info");
+         }
+    } catch (error) {
+      this.showMessage("Fallo la conexion con el servidor!", "info");
+    }
+
+   
+    
+  }
   showMessage(message, cssClass) {
     const div = document.createElement("div");
     div.className = `alert alert-${cssClass} mt-2`;
@@ -298,3 +335,52 @@ export class UI {
     }, 5000);
   }
 }
+
+
+/**
+ * 
+ * @param {product} recibe un objeto de producto 
+ */
+
+function renderizarProduct(product) {
+  const productList = document.getElementById("product-list");
+
+  const element = document.createElement("div");
+
+  element.innerHTML = `
+          <div class="card text-center mb-4">
+              <div class="card-body">
+                  <strong>Producto</strong>: ${product.name} -
+                  <strong>Precio</strong>: ${product.price} -
+                  <strong>Cantidad</strong>: ${product.cantidad} -
+                  <strong>Año</strong>: ${product.year}
+                  <a href="#" id=${product.id} class="btn btn-danger rounded" name="delete">Borrar</a>
+                  <a href="#" id=${product.id} class="btn btn-info rounded" name="edit">Editar</a>
+              </div>
+          </div>
+      `;
+  productList.appendChild(element);
+}
+
+function cargarData (element, product){
+  /**
+   * aqui lleno el formulario con los datos del producto a
+   */
+  document.getElementById('name').value = product.name;
+  document.getElementById('price').value = product.price;
+  document.getElementById('cantidad').value = product.cantidad;
+  document.getElementById('year').value = product.year;
+  /**
+   * trabajo con los botones
+   */
+  const btnSave = document.getElementById('btnSave');
+  btnSave.setAttribute("class", "hidden-btn");
+
+  /**
+   * oculto el item
+   */
+  element.parentElement.parentElement.setAttribute("class", "hidden-btn");
+  const bntEdit = document.getElementById('bntEdit');
+  bntEdit.setAttribute("class", "btn btn-success btn-block rounded show-btn");
+ 
+  }

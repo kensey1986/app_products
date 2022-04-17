@@ -75,36 +75,38 @@ async function trabajandoData(e) {
 
 document.getElementById("bntEdit").addEventListener("click", async (e) => {
   e.preventDefault();
+  const name = document.getElementById("name").value,
+    price = document.getElementById("price").value,
+    cantidad = document.getElementById("cantidad").value,
+    year = document.getElementById("year").value;
 
-  try {
-      const resp = await updateProduct(product);
-
-      if (resp.status === 200) {
-          console.log('actualizo producto')
-      }
-  } catch (error) {
-    
-  }
-
-
-
-  saveProduct(e);
+  const product = new Product(name, price, year, cantidad);
+  
+  // Create a new UI instance
   const ui = new UI();
 
-  ui.deleteProduct(e.target);
-  const idEliminar = e.target.id;
+  // Input User Validation
+  if (name === "" || price === "" || year === "" || cantidad === "" ) {
 
-  listProduct = listProduct.filter((element) => element.id !== idEliminar);
-  localStorage.setItem('listProduct', JSON.stringify(listProduct));
-  const btnSave = document.getElementById('btnSave');
+    return ui.showMessage("Campos Vacios!", "danger");
+  }
+  ui.updateProduct(product)
 
-  // console.log("🚀 ~ file: UI.js ~ line 69 ~ UI ~ editProduct ~ bntEdit", bntEdit)
 
-  btnSave.setAttribute("class", "btn btn-secondary btn-block rounded show-btn");
+  // saveProduct(e);
+  // const ui = new UI();
 
-  const bntEdit = document.getElementById('bntEdit');
-  // console.log("🚀 ~ file: UI.js ~ line 65 ~ UI ~ editProduct ~ btnSave", btnSave)
-  bntEdit.setAttribute("class", "hidden-btn");
+  // ui.deleteProduct(e.target);
+  // const idEliminar = e.target.id;
+
+  // listProduct = listProduct.filter((element) => element.id !== idEliminar);
+  // localStorage.setItem('listProduct', JSON.stringify(listProduct));
+  // const btnSave = document.getElementById('btnSave');
+
+  // btnSave.setAttribute("class", "btn btn-secondary btn-block rounded show-btn");
+
+  // const bntEdit = document.getElementById('bntEdit');
+  // bntEdit.setAttribute("class", "hidden-btn");
 
 });
 
