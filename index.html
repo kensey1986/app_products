@@ -28,7 +28,7 @@
           <div class="card-header bg-dark text-white-50">
             <h4>Agregar productos</h4>
           </div>
-          <form id="product-form" class="card-body">
+          <form id="product-form" method="POST" class="card-body" enctype="multipart/form-data">
             <div class="form-group">
               <input type="text" id="name" placeholder="Nombre Producto" class="form-control" />
             </div>
@@ -41,6 +41,15 @@
             </div>
             <div class="form-group">
               <input type="number" id="year" min="1900" max="2099" step="1" value="2022" class="form-control" />
+            </div>
+            <div class="form-group">
+         
+              <input type="file"
+                    id="avatar" name="avatarProduct"
+                    accept="image/png, image/jpeg"
+                    class="form-control">
+                    <!-- <input type="file" accept="image/*,.pdf, .docx"> -->
+      
             </div>
             <input id="btnSave" type="submit" value="Guardar" class="btn btn-secondary btn-block rounded" />
             <button id="bntEdit" type="button" class="hidden-btn">Actualizar</button>
